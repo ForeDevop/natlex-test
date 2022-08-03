@@ -4,9 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### Readme ###
-Readme.md
-
 ### Maven service ###
 mvnw
 mvnw.cmd
