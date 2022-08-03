@@ -4,7 +4,7 @@
 
 **REST API development as a test task for Natex.**   <br/>
 <br/>
-Task description available at [Test task for backend developer](https://github.com/ForeDevop/natlex-test/BackendTest.pdf)
+Task description available at [Test task for backend developer](https://github.com/ForeDevop/natlex-test/blob/master/Backend%20Test.pdf)
 ---
 
 # Overview
