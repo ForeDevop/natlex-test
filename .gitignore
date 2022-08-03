@@ -1,0 +1,60 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Maven service ###
+mvnw
+mvnw.cmd
+.mvn
+
+### Hide project for commit ###
+src/main/java/ru/novikov/natlex/controller
+src/main/java/ru/novikov/natlex/exception
+src/main/java/ru/novikov/natlex/model
+src/main/java/ru/novikov/natlex/repository
+src/main/java/ru/novikov/natlex/service
+
+
+### Import/Export files API ###
+#src/main/java/ru/novikov/natlex/controller/ImportExportController.java
+src/main/java/ru/novikov/natlex/enumeration
+#src/main/java/ru/novikov/natlex/exception/FileNotFoundException.java
+src/main/java/ru/novikov/natlex/model/ImportExportFile.java
+#src/main/java/ru/novikov/natlex/repository/ImportExportRepository.java
+#src/main/java/ru/novikov/natlex/service/IImportExportService.java
+#src/main/java/ru/novikov/natlex/service/IParseService.java
+#src/main/java/ru/novikov/natlex/service/implementation/ImportExportService.java
+#src/main/java/ru/novikov/natlex/service/implementation/ParseService.java
+src/main/resources/files
+
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+/src/main/java/ru/novikov/natlex/controller/
