@@ -4,11 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Readme ###
+Readme.md
+
 ### Maven service ###
 mvnw
 mvnw.cmd
 .mvn
-
 
 ### Import/Export files API ###
 src/main/java/ru/novikov/natlex/controller/ImportExportController.java
