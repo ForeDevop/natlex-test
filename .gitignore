@@ -9,18 +9,8 @@ mvnw
 mvnw.cmd
 .mvn
 
-### Import/Export files API ###
-src/main/java/ru/novikov/natlex/controller/ImportExportController.java
-src/main/java/ru/novikov/natlex/enumeration
-src/main/java/ru/novikov/natlex/exception/FileNotFoundException.java
-src/main/java/ru/novikov/natlex/model/ImportExportFile.java
-src/main/java/ru/novikov/natlex/repository/ImportExportRepository.java
-src/main/java/ru/novikov/natlex/service/IImportExportService.java
-src/main/java/ru/novikov/natlex/service/IParseService.java
-src/main/java/ru/novikov/natlex/service/implementation/ImportExportService.java
-src/main/java/ru/novikov/natlex/service/implementation/ParseService.java
-src/main/resources/files
-
+### Hiede .xlsx files ###
+src/main/resources/files/*
 
 ### STS ###
 .apt_generated
