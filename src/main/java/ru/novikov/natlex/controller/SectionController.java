@@ -1,6 +1,8 @@
 package ru.novikov.natlex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.novikov.natlex.model.Section;
 import ru.novikov.natlex.service.implementation.SectionService;
@@ -40,7 +42,11 @@ public class SectionController {
     }
 
     @GetMapping("/by-code")
-    public List<Section> getSectionsByGeoClassCode(@RequestParam("code") String code) {
-        return sectionService.getSectionsByGeoClassCode(code);
+    public ResponseEntity<List<Section>> getSectionsByGeoClassCode(@RequestParam("code") String code) {
+        List<Section> sections = sectionService.getSectionsByGeoClassCode(code);
+
+        return sections.isEmpty() ?
+                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                ResponseEntity.ok(sections);
     }
 }

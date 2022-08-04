@@ -47,7 +47,6 @@ public class SectionService implements ISectionService {
         sectionRepository.save(oldSection);
     }
 
-    // FIXME response 404 instead of emptyList and 200
     @Override
     public List<Section> getSectionsByGeoClassCode(String code) {
         return sectionRepository.findByGeoClassCode(code);
