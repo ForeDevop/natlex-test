@@ -4,13 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.novikov.natlex.service.implementation.ImportExportService;
+import ru.novikov.natlex.model.ImportExportFile;
+import ru.novikov.natlex.service.IImportExportService;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("")
 public class ImportExportController {
     @Autowired
-    private ImportExportService importExportService;
+    private IImportExportService importExportService;
 
     @PostMapping(value = "import")
     public long importFile(@RequestParam("file") MultipartFile multipartFile) {
@@ -22,13 +23,13 @@ public class ImportExportController {
         return importExportService.exportFile();
     }
 
-    @GetMapping("import/{id}")
-    public String getImportStatusById(@PathVariable long id) {
+    @GetMapping(value = "import/{id}", produces = "application/json")
+    public ImportExportFile getImportStatusById(@PathVariable long id) {
         return importExportService.getImportFileStatusById(id);
     }
 
     @GetMapping("export/{id}")
-    public String getExportStatusById(@PathVariable long id) {
+    public ImportExportFile getExportStatusById(@PathVariable long id) {
         return importExportService.getExportFileStatusById(id);
     }
 

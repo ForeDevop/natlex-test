@@ -46,19 +46,19 @@ public class ImportExportService implements IImportExportService {
     }
 
     @Override
-    public String getImportFileStatusById(long id) {
+    public ImportExportFile getImportFileStatusById(long id) {
         ImportExportFile importFile = importExportRepository.findById(id)
                 .orElseThrow(() -> new FileNotFoundException(id));
 
-        return String.valueOf(importFile.getStatus());
+        return importFile;
     }
 
     @Override
-    public String getExportFileStatusById(long id) {
+    public ImportExportFile getExportFileStatusById(long id) {
         ImportExportFile exportFile = importExportRepository.findById(id)
                 .orElseThrow(() -> new FileNotFoundException(id));
 
-        return exportFile.getStatus();
+        return exportFile;
     }
 
     @Override
