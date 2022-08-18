@@ -5,16 +5,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.novikov.natlex.model.Section;
-import ru.novikov.natlex.service.implementation.SectionService;
+import ru.novikov.natlex.service.ISectionService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/sections")
+@RequestMapping("/sections")
 public class SectionController {
     @Autowired
-    private SectionService sectionService;
+    private ISectionService sectionService;
 
     @GetMapping
     public List<Section> getAllSections(){

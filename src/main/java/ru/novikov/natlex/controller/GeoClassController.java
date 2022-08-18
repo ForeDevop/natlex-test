@@ -3,15 +3,15 @@ package ru.novikov.natlex.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.novikov.natlex.model.GeoClass;
-import ru.novikov.natlex.service.implementation.GeoClassService;
+import ru.novikov.natlex.service.IGeoClassService;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/geoclasses")
+@RequestMapping("/geoclasses")
 public class GeoClassController {
     @Autowired
-    private GeoClassService geoClassService;
+    private IGeoClassService geoClassService;
 
     @GetMapping
     public List<GeoClass> getAllGeoClass(){
