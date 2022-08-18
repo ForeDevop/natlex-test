@@ -4,13 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.novikov.natlex.exception.GeoClassNotFoundException;
 import ru.novikov.natlex.model.GeoClass;
-import ru.novikov.natlex.model.Section;
 import ru.novikov.natlex.repository.GeoClassRepository;
 import ru.novikov.natlex.service.IGeoClassService;
-
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class GeoClassService implements IGeoClassService {
@@ -29,13 +25,13 @@ public class GeoClassService implements IGeoClassService {
     }
 
     @Override
-    public GeoClass getGeoClassById(long id) throws GeoClassNotFoundException {
+    public GeoClass getGeoClassById(long id) {
         return geoClassRepository.findById(id)
                 .orElseThrow(() -> new GeoClassNotFoundException(id));
     }
 
     @Override
-    public void deleteGeoClassById(long id) throws GeoClassNotFoundException {
+    public void deleteGeoClassById(long id) {
         GeoClass geoClass = geoClassRepository.findById(id)
                         .orElseThrow(() -> new GeoClassNotFoundException(id));
 

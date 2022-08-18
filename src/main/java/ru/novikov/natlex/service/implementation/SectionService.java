@@ -25,7 +25,7 @@ public class SectionService implements ISectionService {
     }
 
     @Override
-    public Section getSectionById(long id) throws SectionNotFoundException{
+    public Section getSectionById(long id) {
         return sectionRepository.findById(id)
                 .orElseThrow(() -> new SectionNotFoundException(id));
     }
@@ -39,7 +39,7 @@ public class SectionService implements ISectionService {
     }
 
     @Override
-    public void updateSection(long id, Section newSection) throws SectionNotFoundException{
+    public void updateSection(long id, Section newSection) {
         Section oldSection = sectionRepository.findById(id)
                 .orElseThrow(() -> new SectionNotFoundException(id));
 
