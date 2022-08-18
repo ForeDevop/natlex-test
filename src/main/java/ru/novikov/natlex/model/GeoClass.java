@@ -12,7 +12,6 @@ import javax.persistence.*;
 public class GeoClass {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     @Column(name = "id")
     private Long id;
 
@@ -26,5 +25,4 @@ public class GeoClass {
     @JsonBackReference
     @JoinColumn(name = "section_id")
     private Section section;
-
 }
