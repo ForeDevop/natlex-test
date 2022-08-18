@@ -29,68 +29,17 @@ public class ParseService implements IParseService {
 
     @Async
     @Override
-    public void parseFileToDB(InputStream is, long fileId) {
+    public void parseFileToDB(InputStream inputStream, long fileId) {
         ImportExportFile importFile = new ImportExportFile();
         importFile.setStatus(JobStatus.IN_PROGRESS.name());
         importFile.setId(fileId);
 
         importFile = importExportRepository.save(importFile);
 
-        try (Workbook workbook = new XSSFWorkbook(is)) {
+        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
 
-            Iterator<Row> rows = sheet.iterator();
-            List<Section> sections = new ArrayList<>();
-
-            boolean skipHeader = true;
-            while (rows.hasNext()) {
-                Row row = rows.next();
-
-                if (skipHeader) {
-                    skipHeader = false;
-                    row = rows.next();
-                }
-
-                Iterator<Cell> cellsInRow = row.iterator();
-
-                Section section = new Section();
-                List<GeoClass> geoClasses = new ArrayList<>();
-
-                int cellIdx = 0;
-                while (cellsInRow.hasNext()) {
-                    Cell currentCell = cellsInRow.next();
-
-                    if (currentCell.getStringCellValue().isEmpty()) {
-                        continue;
-                    }
-
-                    // Cell with Section name
-                    if (cellIdx == 0) {
-                        section.setName(currentCell.getStringCellValue());
-                        cellIdx++;
-                        continue;
-                    }
-
-                    // Cell with GeoClass name
-                    if (cellIdx % 2 == 1) {
-                        GeoClass geoClass = new GeoClass();
-                        geoClass.setName(currentCell.getStringCellValue());
-                        geoClass.setSection(section);
-                        geoClasses.add(geoClass);
-                    }
-
-                    // Cell with geoClass code
-                    if (cellIdx % 2 == 0) {
-                        geoClasses.get(geoClasses.size() - 1)
-                                .setCode(currentCell.getStringCellValue());
-                    }
-
-                    cellIdx++;
-                }
-
-                section.setGeologicalClasses(geoClasses);
-                sections.add(section);
-            }
+            List<Section> sections = getSectionsContentFromSheet(sheet);
 
             sectionRepository.saveAll(sections);
             importFile.setStatus(JobStatus.DONE.name());
@@ -98,8 +47,68 @@ public class ParseService implements IParseService {
 
         } catch (IOException e) {
             importFile.setStatus(JobStatus.ERROR.name());
+            importExportRepository.save(importFile);
             throw new RuntimeException(e);
         }
+    }
+
+    public List<Section> getSectionsContentFromSheet(Sheet sheet) {
+        List<Section> sections = new ArrayList<>();
+        Iterator<Row> rows = sheet.iterator();
+
+        boolean skipHeader = true;
+        while (rows.hasNext()) {
+            Row row = rows.next();
+
+            if (skipHeader) {
+                skipHeader = false;
+                row = rows.next();
+            }
+
+            Iterator<Cell> cellsInRow = row.iterator();
+            sections.add(getSectionContentFromCells(cellsInRow));
+        }
+
+        return sections;
+    }
+
+    public Section getSectionContentFromCells(Iterator<Cell> cellsInRow) {
+        List<GeoClass> geoClasses = new ArrayList<>();
+        Section section = new Section();
+
+        int cellIdx = 0;
+        boolean cellIsEmpty = false;
+        while (cellsInRow.hasNext()) {
+            Cell currentCell = cellsInRow.next();
+
+            cellIsEmpty = currentCell.getStringCellValue().isEmpty();
+
+            // Cell with Section name
+            if (cellIdx == 0 && !cellIsEmpty) {
+                section.setName(currentCell.getStringCellValue());
+                cellIdx++;
+                continue;
+            }
+
+            // Cell with GeoClass name
+            if (cellIdx % 2 == 1) {
+                GeoClass geoClass = new GeoClass();
+                geoClass.setName(currentCell.getStringCellValue());
+                geoClass.setSection(section);
+                geoClasses.add(geoClass);
+            }
+
+            // Cell with geoClass code
+            if (cellIdx % 2 == 0) {
+                geoClasses.get(geoClasses.size() - 1).setCode(currentCell.getStringCellValue());
+            }
+
+            cellIdx++;
+        }
+
+        section.setGeologicalClasses(geoClasses);
+
+        return section;
     }
 
     @Async
@@ -117,33 +126,7 @@ public class ParseService implements IParseService {
              FileOutputStream fos = new FileOutputStream(path + ".xlsx")) {
 
             Sheet sheet = workbook.createSheet("Sections");
-            sheet.setDefaultColumnWidth(30);
-
-            // Create header
-            Row header = sheet.createRow(0);
-            header.createCell(0).setCellValue("Section name");
-
-            int maxGeoClassesCount = Section.getMaxGeoClassesCount(sections);
-            int classNumber = 1;
-            for (int i = 1; i < maxGeoClassesCount * 2; i += 2) {
-                header.createCell(i).setCellValue("Class " + classNumber + " name");
-                header.createCell(i + 1).setCellValue("Class " + classNumber + " code");
-                classNumber++;
-            }
-
-            // Create section content
-            int rowIdx = 1;
-            for (Section section : sections) {
-                Row row = sheet.createRow(rowIdx++);
-                row.createCell(0).setCellValue(section.getName());
-
-                int cellIdx = 1;
-                for (GeoClass geoClass : section.getGeologicalClasses()) {
-                    row.createCell(cellIdx++).setCellValue(geoClass.getName());
-                    row.createCell(cellIdx++).setCellValue(geoClass.getCode());
-                }
-            }
-
+            fillSheetWithContent(sheet, sections);
             workbook.write(fos);
 
             exportFile.setStatus(JobStatus.DONE.name());
@@ -151,7 +134,37 @@ public class ParseService implements IParseService {
 
         } catch (IOException e) {
             exportFile.setStatus(JobStatus.ERROR.name());
+            importExportRepository.save(exportFile);
             throw new RuntimeException("Fail to export data to Excel file!");
+        }
+    }
+
+    public void fillSheetWithContent(Sheet sheet, List<Section> sections) {
+        sheet.setDefaultColumnWidth(30);
+
+        // Create header
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Section name");
+
+        int maxGeoClassesCount = Section.getMaxGeoClassesCount(sections);
+        int classNumber = 1;
+        for (int i = 1; i < maxGeoClassesCount * 2; i += 2) {
+            header.createCell(i).setCellValue("Class " + classNumber + " name");
+            header.createCell(i + 1).setCellValue("Class " + classNumber + " code");
+            classNumber++;
+        }
+
+        // Create section content
+        int rowIdx = 1;
+        for (Section section : sections) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(section.getName());
+
+            int cellIdx = 1;
+            for (GeoClass geoClass : section.getGeologicalClasses()) {
+                row.createCell(cellIdx++).setCellValue(geoClass.getName());
+                row.createCell(cellIdx++).setCellValue(geoClass.getCode());
+            }
         }
     }
 }
