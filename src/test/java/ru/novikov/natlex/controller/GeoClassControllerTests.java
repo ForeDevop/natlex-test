@@ -13,98 +13,103 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
-@Sql(value = {"/query/section-before-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = {"/query/section-after-test.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class SectionControllerTests {
+@Sql(value = {"/query/geoclass-before-test.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = {"/query/geoclass-after-test.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+class GeoClassControllerTests {
     @Autowired
     private MockMvc mvc;
 
     @Test
-    void findAllSectionsTest() throws Exception {
-        String result = mvc.perform(get("/sections")
+    void findAllGeoClassesTest() throws Exception {
+        String result = mvc.perform(get("/geoclasses")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         JSONAssert.assertEquals(
                 "[{ id : 1," +
-                        "name: \"Section 1\"," +
-                        "geologicalClasses:[]}," +
+                        "name: \"Geo Class 11\"," +
+                        "code: \"GC11\"}," +
                         "{id : 2," +
-                        "name: \"Section 2\"," +
-                        "geologicalClasses:[] }]", result, JSONCompareMode.STRICT);
+                        "name: \"Geo Class 12\"," +
+                        "code: \"GC12\" }," +
+                        "{id : 3," +
+                        "name: \"Geo Class 21\"," +
+                        "code: \"GC21\" }]", result, JSONCompareMode.STRICT);
     }
 
     @Test
-    public void findSectionTest() throws Exception {
-        String result = mvc.perform(get("/sections/{id}", 1))
+    public void findGeoClassByIdTest() throws Exception {
+        String result = mvc.perform(get("/geoclasses/{id}", 1))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         JSONAssert.assertEquals(
                 "{ id : 1," +
-                        "name: \"Section 1\"," +
-                        "geologicalClasses:[] }",
+                        "name: \"Geo Class 11\"," +
+                        "code: \"GC11\" }",
                 result, JSONCompareMode.STRICT);
 
     }
 
     @Test
-    public void createSectionTest() throws Exception {
-        String result = mvc.perform(post("/sections")
+    public void createGeoClassTest() throws Exception {
+        String result = mvc.perform(post("/geoclasses")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Section 3\"," +
-                                "\"geologicalClasses\": []}"))
+                        .content("{\"name\":\"Geo Class 22\"," +
+                                "\"code\": \"GC22\"}"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         JSONAssert.assertEquals(
-                "{ id : 3," +
-                        "name: \"Section 3\"," +
-                        "geologicalClasses:[] }",
+                "{ id : 4," +
+                        "name: \"Geo Class 22\"," +
+                        "code: \"GC22\" }",
                 result, JSONCompareMode.STRICT);
     }
 
     @Test
-    public void updateSectionTest() throws Exception {
-        mvc.perform(put("/sections/{id}", 2)
+    public void updateGeoClassTest() throws Exception {
+        mvc.perform(put("/geoclasses/{id}", 2)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Section 200\"," +
-                                "\"geologicalClasses\":[]}"))
+                        .content("{\"name\":\"Geo Class 8080\"," +
+                                "\"code\":\"GC8080\"}"))
                 .andExpect(status().isOk());
 
-        String result = mvc.perform(get("/sections/{id}", 2))
+        String result = mvc.perform(get("/geoclasses/{id}", 2))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         JSONAssert.assertEquals(
                 "{ id : 2," +
-                        "name: \"Section 200\"," +
-                        "geologicalClasses:[] }",
+                        "name: \"Geo Class 8080\"," +
+                        "code: \"GC8080\" }",
                 result, JSONCompareMode.STRICT);
     }
 
     @Test
-    public void deleteSectionTest() throws Exception {
-        mvc.perform(delete("/sections/{id}", 2))
+    public void deleteGeoClassTest() throws Exception {
+        mvc.perform(delete("/geoclasses/{id}", 3))
                 .andExpect(status().isOk());
 
-        String result = mvc.perform(get("/sections")
+        String result = mvc.perform(get("/geoclasses")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
         JSONAssert.assertEquals(
                 "[{ id : 1," +
-                        "name: \"Section 1\"," +
-                        "geologicalClasses:[] }]",
-                result, JSONCompareMode.STRICT);
+                        "name: \"Geo Class 11\"," +
+                        "code: \"GC11\"}," +
+                        "{id : 2," +
+                        "name: \"Geo Class 12\"," +
+                        "code: \"GC12\" }]", result, JSONCompareMode.STRICT);
     }
 }
