@@ -27,7 +27,7 @@ class SectionControllerTests {
     private MockMvc mvc;
 
     @Test
-    void findAllSectionsTest() throws Exception {
+    public void findAllSectionsTest() throws Exception {
         String result = mvc.perform(get("/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

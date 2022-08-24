@@ -27,7 +27,7 @@ class GeoClassControllerTests {
     private MockMvc mvc;
 
     @Test
-    void findAllGeoClassesTest() throws Exception {
+    public void findAllGeoClassesTest() throws Exception {
         String result = mvc.perform(get("/geoclasses")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
